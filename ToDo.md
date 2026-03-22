@@ -1,6 +1,7 @@
 | Utført| Oppgaveteskt| Komentarer |
 |:-----:|:------------|:-----------|
 |:black_square_button:| Opprette csv over terretorier og sjøsoner||
+|:black_square_button:| Vurder om der skal flere kolonner til i terretories.csv fær man starter med vibe koding av app||
 |:black_square_button:| Legge til valg for oppslag av regler, denne kan legges under menu||
 |:black_square_button:| Legg til spill oppsett hvor brikkene skal plaseres på brettet.|Denne må vuderes på hvor jeg skal legge den|
 |:black_square_button:| Opprette Battle (conduct combat)||
