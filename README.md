@@ -1,9 +1,26 @@
 
 # Axis & Allies Game Tracker
 
+
 ## Om prosjektet
 
 Dette er et åpent prosjekt for å utvikle en digital applikasjon som hjelper spillere av Axis & Allies Global 1940 (Second Edition) med å holde oversikt over runder, IPC-inntekter, bonuser og annen spillprogresjon. Prosjektet er tilgjengelig på GitHub for alle som ønsker å bidra eller bruke løsningen.
+
+### Mockup og design
+For å lage de første skissene (mockups) av appen har jeg brukt [Excalidraw](https://excalidraw.com/). Under ser du to eksempler på slike mockup-bilder, vist som miniatyrer. Klikk på bildet for å se en større versjon:
+
+<table>
+	<tr>
+		<td align="center">
+			<a href="Pictures/Mocup/mockup_nasjoner_v1.png"><img src="Pictures/Mocup/mockup_nasjoner_v1.png" alt="Mockup nasjoner v1" width="200"/></a><br/>
+			<sub>Mockup nasjoner v1</sub>
+		</td>
+		<td align="center">
+			<a href="Pictures/Mocup/mockup_nasjoner_v2.png"><img src="Pictures/Mocup/mockup_nasjoner_v2.png" alt="Mockup nasjoner v2" width="200"/></a><br/>
+			<sub>Mockup nasjoner v2</sub>
+		</td>
+	</tr>
+</table>
 
 ## Bakgrunn og problemforståelse
 

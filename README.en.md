@@ -1,8 +1,25 @@
 # Axis & Allies Game Tracker
 
+
 ## Project Overview
 
 Axis & Allies Game Tracker is a digital tool designed to simplify and enhance the gameplay experience for Axis & Allies Global 1940 (Second Edition). The app helps players keep track of game rounds, IPC income, and bonuses, eliminating the need for physical markers and reducing the risk of errors during play.
+
+### Mockup and Design
+Initial app mockups were created using [Excalidraw](https://excalidraw.com/). Below are two example mockup images shown as thumbnails. Click an image to view it in full size:
+
+<table>
+	<tr>
+		<td align="center">
+			<a href="Pictures/Mocup/mockup_nasjoner_v1.png"><img src="Pictures/Mocup/mockup_nasjoner_v1.png" alt="Mockup nations v1" width="200"/></a><br/>
+			<sub>Mockup nations v1</sub>
+		</td>
+		<td align="center">
+			<a href="Pictures/Mocup/mockup_nasjoner_v2.png"><img src="Pictures/Mocup/mockup_nasjoner_v2.png" alt="Mockup nations v2" width="200"/></a><br/>
+			<sub>Mockup nations v2</sub>
+		</td>
+	</tr>
+</table>
 
 ## Background
 
