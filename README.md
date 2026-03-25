@@ -62,6 +62,19 @@ Global 1940 byr på et rikt og komplekst spill med mange brikker, markører og d
 
 Dette er et hobbyprosjekt jeg jobber med på fritiden, så utviklingen skjer i rykk og napp etter kapasitet og motivasjon.
 
+## Forklaring 
+### Terretorier
+|Navn|Type|Controller|IPC|IsCapitalOf|VictoryCity|Map|MainCaptial|Army|Continent|Terretories owner|
+|:---|:---|:---------|:--|:----------|:----------|:--|:----------|:---|:--------|:----------------|
+|Alaska|Territory|USA|2|No||No|Pacific|||America|
+|United Kindom (London)|Territory|UK (Europe)|6|Yes|UK (Europe)|Yes|Europe|Yes||Europe|
+|Sea Zone 1|Sea Zone|||No||No|Pacific||||
+
+### Units
+|Unit|Cost|Attack|Defense|Move|Unit Characteristics|
+|:---|:---|:-----|:------|:---|:-------------------|
+|Minor Industrial Complexes| 12||||Factories: Industrial complexes are the point of entry for all purchased air, land, and sea units. There are two types of industrial complexes, major and minor. Major industrial complexes have a “10” printed on them. Each of these major industrial complexes can produce up to 10 combat (land, air, or sea) units per turn. Minor industrial complexes can produce up to 3 combat units per turn. They have a “3” printed on them. A minor industrial complex can be upgraded to a major one at a cost of 20 IPCs. The industrial complex to be upgraded must be located on an originally controlled (not captured) territory that you have controlled since the beginning of your turn and that has an IPC value of 3 or higher. You can’t place your new units at an industrial complex owned by a friendly power. Even if you liberate a territory with an industrial complex in it, you can’t use the complex; the original controller can use it on his or her next turn. If you capture it, you can use it on your next turn. You can use an industrial complex that you controlled at the beginning of your turn. Subject to Damage: For each damage marker that is under an industrial complex (see above), that complex can mobilize 1 less unit. Industrial complexes can have at least as many damage markers as they have production ability. In such a case, no new units can enter the game through that complex until it’s repaired. A damaged minor complex may not be upgraded, so any damage on the industrial complex must be repaired at the same time that the upgrade is purchased.|
+|Cruisers|12|3|3|2|Offshore Bombardment: Your cruisers (along with your battleships) can conduct offshore bombardment during an amphibious assault (see “Amphibious Assaults—Step 2. Battleship and Cruiser Bombardment,” page 18)|
 ## Installasjon
 
 _Kommer snart_
