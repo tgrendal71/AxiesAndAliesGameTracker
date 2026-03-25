@@ -1,5 +1,4 @@
 
-
 | Utført| Oppgaveteskt| Komentarer |
 |:-----:|:------------|:-----------|
 |:white_check_mark:| Opprette csv over terretorier og sjøsoner||
@@ -14,5 +13,12 @@
 |:black_square_button:| Skal det lages merknad for hvor man har byggninger, factory, Naval base og Air base ||
 |:black_square_button:| Ved skade på bygginger så må det også fikser og hvilken bygning det gjelder||
 |:black_square_button:| Order of Play ||
-| | &nbsp;&nbsp;&nbsp;:one: Purchase & Repair Units | hvis man har med **Research and Development** så skal den ligge inne i purchase |
+| | &nbsp;&nbsp;&nbsp;:one: Phase 1: Purchase & Repair Units | hvis man har med **Research and Development** så skal den ligge inne i purchase |
+| | &nbsp;&nbsp;&nbsp;:two: Phase 2: Combat Move – (Powers at War Only) |  |
+| | &nbsp;&nbsp;&nbsp;:rocket: Rockets | Rocket attack against an enemy industrial complex, air base, or naval base within 4 spaces of it |
+| | &nbsp;&nbsp;&nbsp;:three: Phase 3: Conduct Combat (Powers at War Only) – (Powers at War Only) | |
+| | &nbsp;&nbsp;&nbsp;:four: Phase 4: Noncombat Move – (Powers at War Only) |  |
+| | &nbsp;&nbsp;&nbsp;:five: Phase 5: Mobilize New Units |  |
+| | &nbsp;&nbsp;&nbsp;:six: Phase 6: Collect Income |  |
+| | &nbsp;&nbsp;&nbsp;:dollar: Conduct Convoy Disruptions | Konvoi angrep gjøres på slutte av runden til nasjonen som spiller, nasjonen soom eier ubårten kaste terninger|
 
