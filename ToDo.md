@@ -16,7 +16,7 @@
 | | &nbsp;&nbsp;&nbsp;1️⃣ Phase 1: Purchase & Repair Units | hvis man har med **Research and Development** så skal den ligge inne i purchase |
 | | &nbsp;&nbsp;&nbsp;2️⃣ Phase 2: Combat Move – (Powers at War Only) |  |
 | | &nbsp;&nbsp;&nbsp;🚀 Rockets | Rocket attack against an enemy industrial complex, air base, or naval base within 4 spaces of it |
-| | &nbsp;&nbsp;&nbsp;3️⃣ Phase 3: Conduct Combat (Powers at War Only) – (Powers at War Only) | |
+| | &nbsp;&nbsp;&nbsp;3️⃣ Phase 3: Conduct Combat (Powers at War Only) | |
 | | &nbsp;&nbsp;&nbsp;4️⃣ Phase 4: Noncombat Move – (Powers at War Only) |  |
 | | &nbsp;&nbsp;&nbsp;5️⃣ Phase 5: Mobilize New Units |  |
 | | &nbsp;&nbsp;&nbsp;6️⃣ Phase 6: Collect Income |  |
