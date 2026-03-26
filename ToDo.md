@@ -12,13 +12,13 @@
 |:black_square_button:| Automatikk i bonus for nasjonene, Husk regeler for fred og krigs tid||
 |:black_square_button:| Skal det lages merknad for hvor man har byggninger, factory, Naval base og Air base ||
 |:black_square_button:| Ved skade på bygginger så må det også fikser og hvilken bygning det gjelder||
-|:black_square_button:| Order of Play ||
-| | &nbsp;&nbsp;&nbsp;1️⃣ Phase 1: Purchase & Repair Units | hvis man har med **Research and Development** så skal den ligge inne i purchase |
-| | &nbsp;&nbsp;&nbsp;2️⃣ Phase 2: Combat Move – (Powers at War Only) |  |
-| | &nbsp;&nbsp;&nbsp;🚀 Rockets | Rocket attack against an enemy industrial complex, air base, or naval base within 4 spaces of it |
-| | &nbsp;&nbsp;&nbsp;3️⃣ Phase 3: Conduct Combat (Powers at War Only) | |
-| | &nbsp;&nbsp;&nbsp;4️⃣ Phase 4: Noncombat Move – (Powers at War Only) |  |
-| | &nbsp;&nbsp;&nbsp;5️⃣ Phase 5: Mobilize New Units |  |
-| | &nbsp;&nbsp;&nbsp;6️⃣ Phase 6: Collect Income |  |
-| | &nbsp;&nbsp;&nbsp;💵 Conduct Convoy Disruptions | Konvoi angrep gjøres på slutte av runden til nasjonen som spiller, nasjonen soom eier ubårten kaste terninger|
+|:link:| **Order of Play** ||
+| :black_square_button:| &nbsp;&nbsp;&nbsp;1️⃣ Phase 1: Purchase & Repair Units | hvis man har med *Research and Development* så skal den ligge inne i purchase |
+| :black_square_button:| &nbsp;&nbsp;&nbsp;2️⃣ Phase 2: Combat Move – (Powers at War Only) |  |
+| :black_square_button:| &nbsp;&nbsp;&nbsp;🚀 Rockets | Rocket attack against an enemy industrial complex, air base, or naval base within 4 spaces of it |
+| :black_square_button:| &nbsp;&nbsp;&nbsp;3️⃣ Phase 3: Conduct Combat (Powers at War Only) | |
+| :black_square_button:| &nbsp;&nbsp;&nbsp;4️⃣ Phase 4: Noncombat Move – (Powers at War Only) |  |
+| :black_square_button:| &nbsp;&nbsp;&nbsp;5️⃣ Phase 5: Mobilize New Units |  |
+| :black_square_button:| &nbsp;&nbsp;&nbsp;6️⃣ Phase 6: Collect Income |  |
+| :black_square_button:| &nbsp;&nbsp;&nbsp;💵 Conduct Convoy Disruptions | Konvoi angrep gjøres på slutte av runden til nasjonen som spiller, nasjonen soom eier ubårten kaste terninger|
 
