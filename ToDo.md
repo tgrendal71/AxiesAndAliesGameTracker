@@ -20,5 +20,5 @@
 | | &nbsp;&nbsp;&nbsp;:four: Phase 4: Noncombat Move – (Powers at War Only) |  |
 | | &nbsp;&nbsp;&nbsp;:five: Phase 5: Mobilize New Units |  |
 | | &nbsp;&nbsp;&nbsp;:six: Phase 6: Collect Income |  |
-| | &nbsp;&nbsp;&nbsp;:dollar: Conduct Convoy Disruptions | Konvoi angrep gjøres på slutte av runden til nasjonen som spiller, nasjonen soom eier ubårten kaste terninger|
+| | &nbsp;&nbsp;&nbsp;💵 Conduct Convoy Disruptions | Konvoi angrep gjøres på slutte av runden til nasjonen som spiller, nasjonen soom eier ubårten kaste terninger|
 
