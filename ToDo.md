@@ -4,6 +4,7 @@
 |:white_check_mark:| Opprette csv over terretorier og sjøsoner||
 |:white_check_mark:| Opprette csv med units||
 |:white_check_mark:| GamePlaySetup||
+|:white_check_mark:| Starting Income||
 |:black_square_button:| Vurder om der skal flere kolonner til i terretories.csv fær man starter med vibe koding av app||
 |:black_square_button:| Legge til valg for oppslag av regler, denne kan legges under menu||
 |:black_square_button:| Legg til spill oppsett hvor brikkene skal plaseres på brettet.|Denne må vuderes på hvor jeg skal legge den|
