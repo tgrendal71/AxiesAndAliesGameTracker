@@ -23,3 +23,8 @@
 | :black_square_button:| &nbsp;&nbsp;&nbsp;6️⃣ Phase 6: Collect Income |  |
 | :black_square_button:| &nbsp;&nbsp;&nbsp;💵 Conduct Convoy Disruptions | Konvoi angrep gjøres på slutte av runden til nasjonen som spiller, nasjonen soom eier ubårten kaste terninger|
 
+| :black_square_button:| Med aktiv spiller så må man ha muligheten til å gå tilbake til forrige fase hvis man skulle opptage at man har gjort en feil eller for å sjekke. Det kan være låst og at man må aktivt trykke en undo hvis man har gått forbi|
+| :black_square_button:|Følg farge kodene i spillet. Nasjonsfarger.txt|
+| :black_square_button:|UK-E og UK-P, Har to økonomier, men kan dele på utgiftene til R&D, de har felles Teknologi|
+|:black_square_button: |Sjekk Nasjonale mål for Russland nøyere de har bonuser, 3 ipc pr land som enten er Germany, Italian eller pro-Axies |
+

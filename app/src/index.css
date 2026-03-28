@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background-color: #0b0f07;
+    color: #c0b880;
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #0b0f07; }
+  ::-webkit-scrollbar-thumb { background: #2a3818; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c8a030; }
+}
+
+@layer components {
+  .card {
+    @apply bg-[#1a2210] border border-[#2a3818] rounded-sm p-4;
+  }
+
+  .card-header {
+    @apply text-mil-gold font-display text-sm font-semibold uppercase tracking-widest mb-3 pb-2 border-b border-[#2a3818];
+  }
+
+  .btn-primary {
+    @apply bg-mil-gold text-[#0b0f07] font-display font-semibold uppercase tracking-wider
+           px-4 py-2 rounded-sm text-sm
+           hover:bg-mil-text transition-colors cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply bg-[#1a2210] border border-[#2a3818] text-mil-text font-display uppercase tracking-wider
+           px-4 py-2 rounded-sm text-sm
+           hover:border-mil-gold hover:text-mil-gold transition-colors cursor-pointer;
+  }
+
+  .tag {
+    @apply text-xs px-2 py-0.5 rounded-sm font-mono uppercase tracking-wider;
+  }
+
+  .ipc-value {
+    @apply text-mil-gold font-display font-semibold tabular-nums;
+  }
+}
