@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { AXIS_NATIONS, ALLIED_NATIONS } from '../data/nations';
-import type { Territory, NationId } from '../store/types';
+import type { Territory, NationId, NeutralType } from '../store/types';
+
+const NEUTRAL_TYPE_LABELS: Record<NeutralType, string> = {
+  strict:     'Streng nøytral',
+  pro_allies: 'Pro Allierte',
+  pro_axis:   'Pro Akse',
+  mongolia:   'Mongolia',
+  general:    'Nøytral',
+};
 
 const BUILDING_ICONS: Record<string, string> = {
   major_factory: '🏭★',
@@ -137,7 +145,9 @@ export default function TerritoriesPage() {
                         {ctrl.emoji} {ctrl.shortName}
                       </span>
                     ) : (
-                      <span className="tag bg-[#1a2210] text-mil-muted">Nøytral</span>
+                      <span className="tag bg-[#1a2210] text-mil-muted">
+                        {t.neutralType ? NEUTRAL_TYPE_LABELS[t.neutralType] : 'Nøytral'}
+                      </span>
                     )}
                   </td>
                   <td className="px-3 py-2 text-center">

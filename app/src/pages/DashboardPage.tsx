@@ -4,6 +4,7 @@ import { useGameStore, TURN_ORDER } from '../store/gameStore';
 import { AXIS_NATIONS, ALLIED_NATIONS } from '../data/nations';
 import { getVictoryCities } from '../data/territories';
 import type { Nation, Territory } from '../store/types';
+import NationIcon from '../components/NationIcon';
 
 function IPCBar({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = Math.min(100, Math.round((value / Math.max(1, max)) * 100));
@@ -18,7 +19,7 @@ function NationRow({ nation }: { nation: Nation }) {
   return (
     <div className="flex items-center justify-between py-1.5 border-b border-[#1e2a10] last:border-0">
       <div className="flex items-center gap-2">
-        <span className="w-5">{nation.emoji}</span>
+        <NationIcon nation={nation} size="sm" />
         <span className="text-xs font-display uppercase tracking-wide" style={{ color: nation.textColor }}>
           {nation.name}
         </span>
@@ -235,7 +236,14 @@ function RoundSummaryRow({ nation, territories }: { nation: Nation; territories:
 
   const ownedTerritories = territories.filter(t => t.controller === nation.id && t.type === 'land');
   const territoryIPC     = ownedTerritories.reduce((s, t) => s + t.ipc, 0);
-  const objectivesIPC    = nation.objectives.filter(o => o.achieved).reduce((s, o) => s + o.ipcBonus, 0);
+  const objectivesIPC    = nation.objectives.reduce((s, o) => {
+    if (!o.achieved) return s;
+    if (o.perTerritoryIds && o.perTerritoryIds.length > 0) {
+      const count = territories.filter(t => t.controller === nation.id && o.perTerritoryIds!.includes(t.id)).length;
+      return s + o.ipcBonus * count;
+    }
+    return s + o.ipcBonus;
+  }, 0);
   const income           = territoryIPC + objectivesIPC - (nation.convoyLoss ?? 0) + (nation.ipcAdjustment ?? 0);
 
   const purchasedIPC   = nation.purchasedThisTurn.reduce((s, p) => s + p.quantity * p.costEach, 0);
@@ -259,7 +267,7 @@ function RoundSummaryRow({ nation, territories }: { nation: Nation; territories:
       <tr className="border-b border-[#1e2a10] hover:bg-[#0f1509]/50">
         <td className="px-3 py-2">
           <div className="flex items-center gap-1.5">
-            <span>{nation.emoji}</span>
+            <NationIcon nation={nation} size="sm" />
             <span className="font-display text-xs uppercase tracking-wide" style={{ color: nation.textColor }}>
               {nation.shortName}
             </span>

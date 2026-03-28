@@ -215,7 +215,7 @@ export const useGameStore = create<GameStore>()(
 
       resetGame: () => set(blankState),
     }),
-    { name: 'aa-tracker-ide1' }
+    { name: 'aa-tracker-ide1', version: 2 }
   )
 );
 

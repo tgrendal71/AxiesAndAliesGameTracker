@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { TURN_ORDER } from '../data/nations';
 import type { GameSettings, NationId } from '../store/types';
+import NationIcon from '../components/NationIcon';
 
 export default function SetupPage() {
   const { startGame, resetGame, gameStarted } = useGameStore();
@@ -93,7 +94,7 @@ export default function SetupPage() {
                   className="tag shrink-0 w-14 text-center"
                   style={{ backgroundColor: nation.colorDim, color: nation.textColor }}
                 >
-                  {nation.emoji} {nation.shortName}
+                  <NationIcon nation={nation} size="sm" /> {nation.shortName}
                 </span>
                 <input
                   type="text"

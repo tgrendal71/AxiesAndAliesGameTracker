@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { TURN_ORDER } from '../data/nations';
 import type { NationId, Nation, Building } from '../store/types';
+import NationIcon from '../components/NationIcon';
 
 // Unit purchase costs (IPCs) - standard A&A units
 const UNIT_COSTS: { name: string; cost: number; icon: string }[] = [
@@ -128,11 +129,20 @@ function NationCard({ nation }: { nation: Nation }) {
 
   const controlled = territories.filter(t => t.controller === nation.id && t.type === 'land');
   const territoryIPC = controlled.reduce((s, t) => s + t.ipc, 0);
-  const objectivesIPC = nation.objectives.filter(o => o.achieved).reduce((s, o) => s + o.ipcBonus, 0);
+  const objectivesIPC = nation.objectives.reduce((s, o) => {
+    if (!o.achieved) return s;
+    if (o.perTerritoryIds && o.perTerritoryIds.length > 0) {
+      const count = territories.filter(t => t.controller === nation.id && o.perTerritoryIds!.includes(t.id)).length;
+      return s + o.ipcBonus * count;
+    }
+    return s + o.ipcBonus;
+  }, 0);
   const adjustment = nation.ipcAdjustment ?? 0;
   const totalIncome = territoryIPC + objectivesIPC - nation.convoyLoss + adjustment;
 
-  const buildings = controlled.flatMap(t => t.buildings.map(b => ({ ...b, territory: t.name })));
+  const buildingsByTerritory = controlled
+    .filter(t => t.buildings.length > 0)
+    .map(t => ({ name: t.name, buildings: t.buildings }));
 
   const applyManual = (sign: 1 | -1) => {
     const v = parseInt(manualInput, 10);
@@ -150,7 +160,7 @@ function NationCard({ nation }: { nation: Nation }) {
         style={{ backgroundColor: nation.colorDim }}
       >
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{nation.emoji}</span>
+          <NationIcon nation={nation} size="lg" />
           <div>
             <div className="font-display text-xl font-bold" style={{ color: nation.textColor }}>
               {nation.name}
@@ -201,12 +211,21 @@ function NationCard({ nation }: { nation: Nation }) {
             )}
 
             {/* Objectives breakdown */}
-            {nation.objectives.filter(o => o.achieved && o.ipcBonus > 0).map(o => (
-              <div key={o.id} className="flex justify-between text-xs">
-                <span className="text-mil-muted truncate pr-2">{o.description}</span>
-                <span className="text-green-400 shrink-0">+{o.ipcBonus}</span>
-              </div>
-            ))}
+            {nation.objectives.filter(o => o.achieved && o.ipcBonus > 0).map(o => {
+              let bonus = o.ipcBonus;
+              let bonusLabel = `+${o.ipcBonus}`;
+              if (o.perTerritoryIds && o.perTerritoryIds.length > 0) {
+                const count = territories.filter(t => t.controller === nation.id && o.perTerritoryIds!.includes(t.id)).length;
+                bonus = o.ipcBonus * count;
+                bonusLabel = count > 0 ? `+${o.ipcBonus}×${count} = +${bonus}` : '0';
+              }
+              return (
+                <div key={o.id} className="flex justify-between text-xs">
+                  <span className="text-mil-muted truncate pr-2">{o.description}</span>
+                  <span className="text-green-400 shrink-0">{bonusLabel}</span>
+                </div>
+              );
+            })}
 
             <div className="flex justify-between">
               <span className="text-mil-muted">Konvoi tap</span>
@@ -272,14 +291,16 @@ function NationCard({ nation }: { nation: Nation }) {
         {/* Buildings */}
         <div className="bg-[#0f1509] border border-[#2a3818] rounded-sm p-3">
           <div className="card-header">🏗 Bygninger</div>
-          {buildings.length === 0 ? (
+          {buildingsByTerritory.length === 0 ? (
             <div className="text-mil-muted text-xs">Ingen bygninger</div>
           ) : (
             <div className="space-y-1.5 text-xs">
-              {buildings.map((b, i) => (
+              {buildingsByTerritory.map((t, i) => (
                 <div key={i} className="flex items-center justify-between">
-                  <span className="text-mil-text truncate">{b.territory}</span>
-                  <BuildingBadge b={b} />
+                  <span className="text-mil-text truncate">{t.name}</span>
+                  <div className="flex gap-1">
+                    {t.buildings.map((b, j) => <BuildingBadge key={j} b={b} />)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -290,24 +311,32 @@ function NationCard({ nation }: { nation: Nation }) {
         <div className="bg-[#0f1509] border border-[#2a3818] rounded-sm p-3 md:col-span-2">
           <div className="card-header">🎯 Nasjonale mål</div>
           <div className="space-y-2">
-            {nation.objectives.map(obj => (
-              <label key={obj.id} className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={obj.achieved}
-                  onChange={e => toggleObjective(nation.id, obj.id, e.target.checked)}
-                  className="mt-0.5 accent-[#c8a030]"
-                />
-                <span className={`text-xs flex-1 ${obj.achieved ? 'text-mil-text' : 'text-mil-muted'}`}>
-                  {obj.description}
-                </span>
-                {obj.ipcBonus > 0 && (
-                  <span className={`tag shrink-0 ${obj.achieved ? 'bg-[#3a5018] text-green-400' : 'bg-[#0b0f07] text-mil-muted'}`}>
-                    +{obj.ipcBonus} IPC
+            {nation.objectives.map(obj => {
+              let bonusDisplay = `+${obj.ipcBonus} IPC`;
+              if (obj.perTerritoryIds && obj.perTerritoryIds.length > 0) {
+                const count = territories.filter(t => t.controller === nation.id && obj.perTerritoryIds!.includes(t.id)).length;
+                const total = obj.ipcBonus * count;
+                bonusDisplay = `+${obj.ipcBonus}/terr × ${count} = +${total} IPC`;
+              }
+              return (
+                <label key={obj.id} className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={obj.achieved}
+                    onChange={e => toggleObjective(nation.id, obj.id, e.target.checked)}
+                    className="mt-0.5 accent-[#c8a030]"
+                  />
+                  <span className={`text-xs flex-1 ${obj.achieved ? 'text-mil-text' : 'text-mil-muted'}`}>
+                    {obj.description}
                   </span>
-                )}
-              </label>
-            ))}
+                  {obj.ipcBonus > 0 && (
+                    <span className={`tag shrink-0 text-xs ${obj.achieved ? 'bg-[#3a5018] text-green-400' : 'bg-[#0b0f07] text-mil-muted'}`}>
+                      {bonusDisplay}
+                    </span>
+                  )}
+                </label>
+              );
+            })}
           </div>
         </div>
 

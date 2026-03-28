@@ -39,6 +39,10 @@ export interface NationalObjective {
   description: string;
   ipcBonus: number;
   achieved: boolean;
+  /** If set, ipcBonus is multiplied by the count of these territory IDs that the
+   *  owning nation currently controls. The `achieved` toggle still acts as an
+   *  on/off switch for the whole objective. */
+  perTerritoryIds?: string[];
 }
 
 // ─── Nation ───────────────────────────────────────────────────────────────────
@@ -51,6 +55,7 @@ export interface Nation {
   colorDim: string;     // dimmer version
   textColor: string;    // legible text on bg
   emoji: string;
+  chipImage?: string;   // path to chip PNG in /nations/ (e.g. '/nations/chip_Germany.png')
   ipc: number;
   startingIPC: number;
   isActive: boolean;
@@ -76,6 +81,8 @@ export interface CasualtyUnit {
 }
 
 // ─── Territory ────────────────────────────────────────────────────────────────
+export type NeutralType = 'strict' | 'pro_allies' | 'pro_axis' | 'mongolia' | 'general';
+
 export interface Territory {
   id: string;
   name: string;
@@ -88,6 +95,7 @@ export interface Territory {
   isVictoryCity: boolean;
   map: 'Europe' | 'Pacific' | 'Both';
   buildings: Building[];
+  neutralType?: NeutralType;
 }
 
 // ─── Combat ───────────────────────────────────────────────────────────────────

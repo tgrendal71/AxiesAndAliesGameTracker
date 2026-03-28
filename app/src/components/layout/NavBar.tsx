@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useGameStore } from '../../store/gameStore';
 import { TURN_ORDER } from '../../data/nations';
+import NationIcon from '../NationIcon';
 
 const NAV_ITEMS = [
   { to: '/',            label: 'Oversikt',    emoji: '📊' },
@@ -37,7 +38,7 @@ export default function NavBar() {
               className="px-2 py-0.5 rounded-sm font-semibold text-sm"
               style={{ backgroundColor: activeNation.colorDim, color: activeNation.textColor }}
             >
-              {activeNation.emoji} {activeNation.shortName}
+              <NationIcon nation={activeNation} size="sm" /> {activeNation.shortName}
             </span>
             <span className="text-mil-muted">FASE</span>
             <span className="text-mil-text capitalize">{activePhase.replace(/_/g, ' ')}</span>
