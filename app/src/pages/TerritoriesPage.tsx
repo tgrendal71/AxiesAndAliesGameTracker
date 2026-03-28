@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGameStore } from '../store/gameStore';
+import { AXIS_NATIONS, ALLIED_NATIONS } from '../data/nations';
 import type { Territory, NationId } from '../store/types';
 
 const BUILDING_ICONS: Record<string, string> = {
@@ -9,16 +10,14 @@ const BUILDING_ICONS: Record<string, string> = {
   naval_base:    '⚓',
 };
 
-type Filter = 'all' | 'axis' | 'allied' | 'neutral' | 'capital' | 'victory';
+type Filter = 'all' | 'axis' | 'allied' | 'neutral' | 'capital' | 'victory' | 'nation';
 
 export default function TerritoriesPage() {
   const { territories, nations, updateTerritory } = useGameStore();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
+  const [nationFilter, setNationFilter] = useState<NationId | ''>('');
   const [editingId, setEditingId] = useState<string | null>(null);
-
-  const AXIS_IDS:   NationId[] = ['germany', 'italy', 'japan'];
-  const ALLIED_IDS: NationId[] = ['ussr', 'uk_europe', 'uk_pacific', 'usa', 'china', 'anzac', 'france'];
 
   const filtered = territories
     .filter(t => t.type === 'land')
@@ -27,16 +26,26 @@ export default function TerritoriesPage() {
       return true;
     })
     .filter(t => {
-      if (filter === 'axis')    return AXIS_IDS.includes(t.controller as NationId);
-      if (filter === 'allied')  return ALLIED_IDS.includes(t.controller as NationId);
+      if (filter === 'axis')    return AXIS_NATIONS.includes(t.controller as NationId);
+      if (filter === 'allied')  return ALLIED_NATIONS.includes(t.controller as NationId);
       if (filter === 'neutral') return t.controller === 'neutral';
       if (filter === 'capital') return t.isCapital;
       if (filter === 'victory') return t.isVictoryCity;
+      if (filter === 'nation')  return nationFilter ? t.controller === nationFilter : true;
       return true;
     });
 
-  const axisIPC   = territories.filter(t => t.type === 'land' && AXIS_IDS.includes(t.controller as NationId)).reduce((s, t) => s + t.ipc, 0);
-  const alliedIPC = territories.filter(t => t.type === 'land' && ALLIED_IDS.includes(t.controller as NationId)).reduce((s, t) => s + t.ipc, 0);
+  const axisIPC   = territories.filter(t => t.type === 'land' && AXIS_NATIONS.includes(t.controller as NationId)).reduce((s, t) => s + t.ipc, 0);
+  const alliedIPC = territories.filter(t => t.type === 'land' && ALLIED_NATIONS.includes(t.controller as NationId)).reduce((s, t) => s + t.ipc, 0);
+
+  const FILTER_BTNS: { key: Filter; label: string }[] = [
+    { key: 'all',     label: 'Alle' },
+    { key: 'axis',    label: '⚔ Akse' },
+    { key: 'allied',  label: '🛡 Allierte' },
+    { key: 'neutral', label: 'Nøytral' },
+    { key: 'capital', label: '★ Kapital' },
+    { key: 'victory', label: '🏆 Seiersby' },
+  ];
 
   return (
     <div className="space-y-4">
@@ -50,25 +59,44 @@ export default function TerritoriesPage() {
             onChange={e => setSearch(e.target.value)}
             className="bg-[#0b0f07] border border-[#2a3818] rounded-sm px-3 py-1.5 text-sm text-mil-text placeholder-mil-muted focus:outline-none focus:border-mil-gold"
           />
-          <div className="flex gap-1">
-            {(['all', 'axis', 'allied', 'neutral', 'capital', 'victory'] as Filter[]).map(f => (
+
+          {/* Category buttons */}
+          <div className="flex flex-wrap gap-1">
+            {FILTER_BTNS.map(({ key, label }) => (
               <button
-                key={f}
-                onClick={() => setFilter(f)}
+                key={key}
+                onClick={() => { setFilter(key); setNationFilter(''); }}
                 className={`tag cursor-pointer transition-colors ${
-                  filter === f
+                  filter === key && filter !== 'nation'
                     ? 'bg-mil-gold text-[#0b0f07]'
                     : 'bg-[#1a2210] text-mil-muted hover:text-mil-text border border-[#2a3818]'
                 }`}
               >
-                {f === 'all'     ? 'Alle' :
-                 f === 'axis'    ? '⚔ Akse' :
-                 f === 'allied'  ? '🛡 Allierte' :
-                 f === 'neutral' ? 'Nøytral' :
-                 f === 'capital' ? '★ Kapital' : '🏆 Seiersby'}
+                {label}
               </button>
             ))}
           </div>
+
+          {/* Nation dropdown */}
+          <div className="flex items-center gap-1.5">
+            <select
+              value={filter === 'nation' ? nationFilter : ''}
+              onChange={e => {
+                const val = e.target.value as NationId | '';
+                setNationFilter(val);
+                setFilter(val ? 'nation' : 'all');
+              }}
+              className={`bg-[#0b0f07] border rounded-sm px-2 py-1 text-xs text-mil-text focus:outline-none focus:border-mil-gold ${
+                filter === 'nation' ? 'border-mil-gold' : 'border-[#2a3818]'
+              }`}
+            >
+              <option value="">Vis nasjon...</option>
+              {nations.map(n => (
+                <option key={n.id} value={n.id}>{n.emoji} {n.name}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="ml-auto text-xs text-mil-muted">
             {filtered.length} territorier vist
           </div>

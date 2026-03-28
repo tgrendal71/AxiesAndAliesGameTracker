@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore, TURN_ORDER } from '../store/gameStore';
 import { AXIS_NATIONS, ALLIED_NATIONS } from '../data/nations';
 import { getVictoryCities } from '../data/territories';
-import type { Nation } from '../store/types';
+import type { Nation, Territory } from '../store/types';
 
 function IPCBar({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = Math.min(100, Math.round((value / Math.max(1, max)) * 100));
@@ -95,7 +96,13 @@ export default function DashboardPage() {
             <div className="font-display text-2xl font-bold text-mil-gold">{round}</div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap justify-end">
+          <button
+            className="btn-primary text-xs px-4 py-2"
+            onClick={() => navigate('/tur')}
+          >
+            🎯 Gå til fase
+          </button>
           <button className="btn-secondary text-xs" onClick={nextPhase}>
             Neste fase →
           </button>
@@ -191,47 +198,148 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* IPC quick edit */}
-      <div className="card">
-        <div className="card-header">💰 Hurtig IPC-justering</div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {nations.filter(n => !n.isEliminated).map(nation => (
-            <IPCEditor key={nation.id} nation={nation} />
-          ))}
+      {/* Round summary table */}
+      <div className="card p-0 overflow-hidden">
+        <div className="card-header px-4 pt-4 pb-3">📊 Runderesultat — Runde {round}</div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-[#0f1509] border-b border-[#2a3818]">
+                <th className="px-3 py-2 text-left text-mil-muted uppercase tracking-wider font-normal">Nasjon</th>
+                <th className="px-3 py-2 text-center text-mil-muted uppercase tracking-wider font-normal">💰 Inntekt</th>
+                <th className="px-3 py-2 text-center text-mil-muted uppercase tracking-wider font-normal">🗺 Territorier</th>
+                <th className="px-3 py-2 text-center text-mil-muted uppercase tracking-wider font-normal">🛒 Kjøpt</th>
+                <th className="px-3 py-2 text-center text-mil-muted uppercase tracking-wider font-normal">📦 Enheter kjøpt</th>
+                <th className="px-3 py-2 text-center text-mil-muted uppercase tracking-wider font-normal">⚰ Tap</th>
+                <th className="px-3 py-2 text-center text-mil-muted uppercase tracking-wider font-normal">📊 Resultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nations.filter(n => !n.isEliminated).map(n => (
+                <RoundSummaryRow key={n.id} nation={n} territories={territories} />
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
 
-function IPCEditor({ nation }: { nation: Nation }) {
-  const { adjustIPC, setIPC } = useGameStore();
+function RoundSummaryRow({ nation, territories }: { nation: Nation; territories: Territory[] }) {
+  const { recordCasualty, clearCasualties } = useGameStore();
+  const [showForm, setShowForm] = useState(false);
+  const [casUnit, setCasUnit] = useState('Infantry');
+  const [casQty, setCasQty]   = useState(1);
+  const [casCost, setCasCost] = useState(3);
+
+  const ownedTerritories = territories.filter(t => t.controller === nation.id && t.type === 'land');
+  const territoryIPC     = ownedTerritories.reduce((s, t) => s + t.ipc, 0);
+  const objectivesIPC    = nation.objectives.filter(o => o.achieved).reduce((s, o) => s + o.ipcBonus, 0);
+  const income           = territoryIPC + objectivesIPC - (nation.convoyLoss ?? 0) + (nation.ipcAdjustment ?? 0);
+
+  const purchasedIPC   = nation.purchasedThisTurn.reduce((s, p) => s + p.quantity * p.costEach, 0);
+  const purchasedUnits = nation.purchasedThisTurn.reduce((s, p) => s + p.quantity, 0);
+
+  const casualtiesIPC   = nation.casualtiesThisTurn.reduce((s, c) => s + c.quantity * c.costEach, 0);
+  const casualtiesUnits = nation.casualtiesThisTurn.reduce((s, c) => s + c.quantity, 0);
+
+  const result = income - purchasedIPC - casualtiesIPC;
+
+  const addCasualty = () => {
+    if (casQty > 0 && casCost >= 0) {
+      recordCasualty(nation.id, { unitType: casUnit.trim() || 'Enhet', quantity: casQty, costEach: casCost });
+      setShowForm(false);
+      setCasQty(1);
+    }
+  };
 
   return (
-    <div
-      className="rounded-sm p-3 border"
-      style={{ borderColor: nation.color, backgroundColor: nation.colorDim + '40' }}
-    >
-      <div className="text-xs font-display uppercase tracking-wider mb-2" style={{ color: nation.textColor }}>
-        {nation.emoji} {nation.shortName}
-      </div>
-      <div className="ipc-value text-2xl mb-2">{nation.ipc}</div>
-      <div className="flex gap-1">
-        <button
-          className="flex-1 bg-[#0b0f07] border border-[#2a3818] text-red-400 text-sm py-1 rounded-sm hover:bg-red-950 transition-colors"
-          onClick={() => adjustIPC(nation.id, -1)}
-        >−</button>
-        <input
-          type="number"
-          className="w-14 bg-[#0b0f07] border border-[#2a3818] text-center text-mil-gold text-sm py-1 rounded-sm"
-          value={nation.ipc}
-          onChange={e => setIPC(nation.id, parseInt(e.target.value) || 0)}
-        />
-        <button
-          className="flex-1 bg-[#0b0f07] border border-[#2a3818] text-green-400 text-sm py-1 rounded-sm hover:bg-green-950 transition-colors"
-          onClick={() => adjustIPC(nation.id, 1)}
-        >+</button>
-      </div>
-    </div>
+    <>
+      <tr className="border-b border-[#1e2a10] hover:bg-[#0f1509]/50">
+        <td className="px-3 py-2">
+          <div className="flex items-center gap-1.5">
+            <span>{nation.emoji}</span>
+            <span className="font-display text-xs uppercase tracking-wide" style={{ color: nation.textColor }}>
+              {nation.shortName}
+            </span>
+            {!nation.isActive && (
+              <span className="tag bg-[#1a2210] text-mil-muted text-xs">Nøytral</span>
+            )}
+          </div>
+        </td>
+        <td className="px-3 py-2 text-center">
+          <span className="ipc-value text-sm">{income}</span>
+          <span className="text-mil-muted text-xs ml-0.5">IPC</span>
+        </td>
+        <td className="px-3 py-2 text-center text-mil-text">
+          {ownedTerritories.length}
+          <span className="text-mil-muted ml-1">({territoryIPC})</span>
+        </td>
+        <td className="px-3 py-2 text-center">
+          <span className="ipc-value">{purchasedIPC}</span>
+          <span className="text-mil-muted ml-0.5">IPC</span>
+        </td>
+        <td className="px-3 py-2 text-center text-mil-text">{purchasedUnits}</td>
+        <td className="px-3 py-2 text-center">
+          <div className="flex items-center justify-center gap-1.5">
+            <span className="text-mil-text">{casualtiesUnits}</span>
+            {casualtiesIPC > 0 && (
+              <span className="text-red-400">({casualtiesIPC} IPC)</span>
+            )}
+            <button
+              className="text-mil-muted hover:text-green-400 leading-none"
+              title="Legg til tap"
+              onClick={() => setShowForm(f => !f)}
+            >＋</button>
+            {casualtiesUnits > 0 && (
+              <button
+                className="text-mil-muted hover:text-red-400 leading-none"
+                title="Nullstill tap"
+                onClick={() => clearCasualties(nation.id)}
+              >×</button>
+            )}
+          </div>
+        </td>
+        <td className="px-3 py-2 text-center">
+          <span className={`text-sm font-bold ${result >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            {result >= 0 ? '+' : ''}{result}
+          </span>
+        </td>
+      </tr>
+      {showForm && (
+        <tr className="bg-[#080c05] border-b border-[#1e2a10]">
+          <td colSpan={7} className="px-3 py-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-mil-muted text-xs">⚰ Legg til tap:</span>
+              <input
+                className="w-24 bg-[#0b0f07] border border-[#2a3818] text-mil-text text-xs px-2 py-1 rounded-sm"
+                placeholder="Enhetstype"
+                value={casUnit}
+                onChange={e => setCasUnit(e.target.value)}
+              />
+              <input
+                type="number"
+                min={1}
+                className="w-14 bg-[#0b0f07] border border-[#2a3818] text-mil-text text-xs text-center px-1 py-1 rounded-sm"
+                value={casQty}
+                onChange={e => setCasQty(Math.max(1, parseInt(e.target.value) || 1))}
+              />
+              <span className="text-mil-muted text-xs">á</span>
+              <input
+                type="number"
+                min={0}
+                className="w-14 bg-[#0b0f07] border border-[#2a3818] text-mil-text text-xs text-center px-1 py-1 rounded-sm"
+                value={casCost}
+                onChange={e => setCasCost(Math.max(0, parseInt(e.target.value) || 0))}
+              />
+              <span className="text-mil-muted text-xs">IPC</span>
+              <button className="btn-secondary text-xs px-2 py-1" onClick={addCasualty}>Legg til</button>
+              <button className="text-mil-muted hover:text-red-400 text-xs" onClick={() => setShowForm(false)}>Avbryt</button>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }

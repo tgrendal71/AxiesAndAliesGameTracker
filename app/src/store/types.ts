@@ -55,12 +55,21 @@ export interface Nation {
   startingIPC: number;
   isActive: boolean;
   isEliminated: boolean;
+  atWarWith: NationId[];  // nations this power is currently at war with
+  ipcAdjustment: number;  // manual temporary IPC correction
   objectives: NationalObjective[];
   purchasedThisTurn: PurchasedUnit[];
+  casualtiesThisTurn: CasualtyUnit[];  // units lost this round
   convoyLoss: number;
 }
 
 export interface PurchasedUnit {
+  unitType: string;
+  quantity: number;
+  costEach: number;
+}
+
+export interface CasualtyUnit {
   unitType: string;
   quantity: number;
   costEach: number;
@@ -135,6 +144,7 @@ export interface GameState {
   activeNationIndex: number;
   activePhase: Phase;
   phasesDone: Phase[];
+  previousSnapshot: { nationIndex: number; phase: Phase; round: number } | null;
   nations: Nation[];
   territories: Territory[];
   history: HistoryEvent[];
