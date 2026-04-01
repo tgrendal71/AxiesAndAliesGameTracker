@@ -3,6 +3,7 @@ import { useGameStore } from '../store/gameStore';
 import { TURN_ORDER } from '../data/nations';
 import type { NationId, Nation, Building } from '../store/types';
 import NationIcon from '../components/NationIcon';
+import { BREAKTHROUGH_CHARTS } from '../data/technologies';
 
 // Unit purchase costs (IPCs) - standard A&A units
 const UNIT_COSTS: { name: string; cost: number; icon: string }[] = [
@@ -123,7 +124,7 @@ function PurchaseCalculator({ nation }: { nation: Nation }) {
 }
 
 function NationCard({ nation }: { nation: Nation }) {
-  const { territories, toggleObjective, adjustIPC, adjustIPCManual, activePhase } = useGameStore();
+  const { territories, toggleObjective, adjustIPC, adjustIPCManual, activePhase, settings } = useGameStore();
   const [manualInput, setManualInput] = useState('');
   const [showTerrBreakdown, setShowTerrBreakdown] = useState(false);
 
@@ -241,6 +242,13 @@ function NationCard({ nation }: { nation: Nation }) {
               </div>
             )}
 
+            {nation.technologies.includes('war_bonds') && (
+              <div className="flex justify-between text-xs">
+                <span className="text-mil-muted">🎲 Krigsobligasjoner</span>
+                <span className="text-yellow-400">+1T6 IPC — kast terning!</span>
+              </div>
+            )}
+
             <div className="flex justify-between pt-1 border-t border-[#2a3818] font-bold">
               <span className="text-mil-text">Totalt</span>
               <span className="ipc-value">+{totalIncome}</span>
@@ -306,6 +314,39 @@ function NationCard({ nation }: { nation: Nation }) {
             </div>
           )}
         </div>
+
+        {/* Technologies */}
+        {settings.useRnD && (
+          <div className="bg-[#0f1509] border border-[#2a3818] rounded-sm p-3">
+            <div className="card-header">🔬 Teknologier (R&D)</div>
+            {nation.rdTokens > 0 && (
+              <div className="flex items-center gap-2 mb-2 text-xs">
+                <span className="tag bg-[#1a2a10] text-mil-gold border border-[#2a3818]">
+                  🎲 {nation.rdTokens} terning-token (akkumulert)
+                </span>
+                <span className="text-mil-muted">— kastes til gjennombrudd</span>
+              </div>
+            )}
+            {nation.technologies.length === 0 ? (
+              <div className="text-mil-muted text-xs">Ingen teknologier ennå</div>
+            ) : (
+              <div className="space-y-1.5 text-xs">
+                {nation.technologies.map(techId => {
+                  const tech = BREAKTHROUGH_CHARTS.find(t => t.id === techId);
+                  return tech ? (
+                    <div key={techId} className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="text-mil-text font-medium">{tech.norwegianName}</span>
+                        <span className="text-mil-muted ml-1">({tech.name})</span>
+                      </div>
+                      <span className="tag bg-[#1a2810] text-green-400 shrink-0">{tech.effect}</span>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* National Objectives */}
         <div className="bg-[#0f1509] border border-[#2a3818] rounded-sm p-3 md:col-span-2">

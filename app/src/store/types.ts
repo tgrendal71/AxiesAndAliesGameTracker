@@ -63,6 +63,10 @@ export interface Nation {
   atWarWith: NationId[];  // nations this power is currently at war with
   ipcAdjustment: number;  // manual temporary IPC correction
   objectives: NationalObjective[];
+  technologies: TechId[];          // permanently unlocked R&D techs
+  rdTokens: number;                // accumulated R&D dice carrying over until breakthrough
+  capitalCaptured: boolean;        // true if this nation's capital is held by an enemy
+  pendingCapitalSeizures: Array<{ capturedFrom: NationId; amount: number }>; // IPC seized from enemy capitals this turn, applied at Collect Income
   purchasedThisTurn: PurchasedUnit[];
   casualtiesThisTurn: CasualtyUnit[];  // units lost this round
   convoyLoss: number;
@@ -79,6 +83,18 @@ export interface CasualtyUnit {
   quantity: number;
   costEach: number;
 }
+
+// ─── Research & Development ───────────────────────────────────────────────────
+// Breakthrough Chart 1 (official A&A Global 1940 2nd Ed)
+export type TechChart1Id =
+  | 'advanced_artillery' | 'rockets' | 'paratroopers'
+  | 'increased_factory_production' | 'war_bonds' | 'improved_mechanized_infantry';
+// Breakthrough Chart 2
+export type TechChart2Id =
+  | 'super_submarines' | 'jet_fighters' | 'improved_shipyards'
+  | 'radar' | 'long_range_aircraft' | 'heavy_bombers';
+
+export type TechId = TechChart1Id | TechChart2Id;
 
 // ─── Territory ────────────────────────────────────────────────────────────────
 export type NeutralType = 'strict' | 'pro_allies' | 'pro_axis' | 'mongolia' | 'general';

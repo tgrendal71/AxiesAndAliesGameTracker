@@ -107,6 +107,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -165,6 +169,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -229,6 +237,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   // ─── ALLIED ──────────────────────────────────────────────────────────────
@@ -273,6 +285,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -301,6 +317,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -329,6 +349,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -381,6 +405,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -409,6 +437,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -443,6 +475,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
   {
@@ -471,6 +507,10 @@ export const initialNations: Nation[] = [
     ],
     purchasedThisTurn: [],
     convoyLoss: 0,
+    technologies: [],
+    rdTokens: 0,
+    capitalCaptured: false,
+    pendingCapitalSeizures: [],
     casualtiesThisTurn: [],
   },
 ];
@@ -481,5 +521,6 @@ export function getNation(nations: Nation[], id: NationId): Nation | undefined {
 
 export const AXIS_NATIONS: NationId[]   = ['germany', 'italy', 'japan'];
 export const ALLIED_NATIONS: NationId[] = ['ussr', 'uk_europe', 'uk_pacific', 'usa', 'china', 'anzac', 'france'];
+
 
 

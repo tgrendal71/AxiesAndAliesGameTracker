@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type {
   GameState, GameSettings, NationId, Phase, Territory, Nation,
-  HistoryEvent, PurchasedUnit, NationalObjective, CasualtyUnit,
+  HistoryEvent, PurchasedUnit, NationalObjective, CasualtyUnit, TechId,
 } from './types';
 import { initialNations, TURN_ORDER } from '../data/nations';
 import { initialTerritories } from '../data/territories';
@@ -56,7 +56,11 @@ interface GameActions {
   clearPurchases: (nationId: NationId) => void;
   recordCasualty: (nationId: NationId, unit: CasualtyUnit) => void;
   clearCasualties: (nationId: NationId) => void;
+  clearCapitalSeizures: (nationId: NationId) => void;
   toggleObjective: (nationId: NationId, objectiveId: string, achieved: boolean) => void;
+  addTechnology: (nationId: NationId, techId: TechId) => void;
+  removeTechnology: (nationId: NationId, techId: TechId) => void;
+  setRdTokens: (nationId: NationId, count: number) => void;
   addHistory: (event: Omit<HistoryEvent, 'id' | 'timestamp'>) => void;
   resetGame: () => void;
 }
@@ -155,11 +159,47 @@ export const useGameStore = create<GameStore>()(
         }),
       })),
 
-      updateTerritory: (id, updates) => set(s => ({
-        territories: s.territories.map(t =>
-          t.id === id ? { ...t, ...updates } : t
-        ),
-      })),
+      updateTerritory: (id, updates) => set(s => {
+        const territory = s.territories.find(t => t.id === id);
+        let nations = s.nations;
+
+        // ── Capital capture / liberation logic ───────────────────────────────
+        if (territory && updates.controller !== undefined && territory.isCapital && territory.capitalOf) {
+          const capitalOwnerId = territory.capitalOf;
+          const oldController  = territory.controller;
+          const newController  = updates.controller;
+
+          // Capture: enemy takes the capital from the original owner for the first time
+          if (
+            newController !== capitalOwnerId &&
+            newController !== 'neutral' &&
+            oldController === capitalOwnerId
+          ) {
+            const capturedNation = nations.find(n => n.id === capitalOwnerId);
+            const stolenIPC      = capturedNation?.ipc ?? 0;
+            nations = nations.map(n => {
+              if (n.id === capitalOwnerId) return { ...n, ipc: 0, capitalCaptured: true };
+              if (n.id === newController)  return {
+                ...n,
+                pendingCapitalSeizures: [...(n.pendingCapitalSeizures ?? []), { capturedFrom: capitalOwnerId, amount: stolenIPC }],
+              };
+              return n;
+            });
+          }
+
+          // Liberation: capital returns to original owner
+          if (newController === capitalOwnerId && oldController !== capitalOwnerId) {
+            nations = nations.map(n =>
+              n.id === capitalOwnerId ? { ...n, capitalCaptured: false } : n
+            );
+          }
+        }
+
+        return {
+          nations,
+          territories: s.territories.map(t => t.id === id ? { ...t, ...updates } : t),
+        };
+      }),
 
       updateNation: (id, updates) => set(s => ({
         nations: s.nations.map(n => n.id === id ? { ...n, ...updates } : n),
@@ -193,6 +233,12 @@ export const useGameStore = create<GameStore>()(
         ),
       })),
 
+      clearCapitalSeizures: (nationId) => set(s => ({
+        nations: s.nations.map(n =>
+          n.id === nationId ? { ...n, pendingCapitalSeizures: [] } : n
+        ),
+      })),
+
       toggleObjective: (nationId, objectiveId, achieved) => set(s => ({
         nations: s.nations.map(n =>
           n.id === nationId
@@ -206,6 +252,28 @@ export const useGameStore = create<GameStore>()(
         ),
       })),
 
+      addTechnology: (nationId, techId) => set(s => ({
+        nations: s.nations.map(n =>
+          n.id === nationId && !n.technologies.includes(techId)
+            ? { ...n, technologies: [...n.technologies, techId] }
+            : n
+        ),
+      })),
+
+      removeTechnology: (nationId, techId) => set(s => ({
+        nations: s.nations.map(n =>
+          n.id === nationId
+            ? { ...n, technologies: n.technologies.filter(t => t !== techId) }
+            : n
+        ),
+      })),
+
+      setRdTokens: (nationId, count) => set(s => ({
+        nations: s.nations.map(n =>
+          n.id === nationId ? { ...n, rdTokens: Math.max(0, count) } : n
+        ),
+      })),
+
       addHistory: (event) => set(s => ({
         history: [
           ...s.history,
@@ -215,7 +283,63 @@ export const useGameStore = create<GameStore>()(
 
       resetGame: () => set(blankState),
     }),
-    { name: 'aa-tracker-ide1', version: 2 }
+    {
+      name: 'aa-tracker-ide1',
+      version: 7,
+      migrate: (stored: unknown, fromVersion: number) => {
+        const s = stored as GameState;
+        let state = s;
+        if (fromVersion < 3) {
+          state = { ...state, nations: state.nations.map(n => ({ ...n, technologies: n.technologies ?? [] })) };
+        }
+        if (fromVersion < 4) {
+          state = { ...state, nations: state.nations.map(n => ({ ...n, rdTokens: (n as Nation & { rdTokens?: number }).rdTokens ?? 0 })) };
+        }
+        if (fromVersion < 5) {
+          state = { ...state, nations: state.nations.map(n => ({ ...n, capitalCaptured: (n as Nation & { capitalCaptured?: boolean }).capitalCaptured ?? false })) };
+        }
+        if (fromVersion < 6) {
+          // Detect capitals already held by an enemy and fix capitalCaptured + transfer IPC
+          let nations = state.nations.map(n => ({ ...n, capitalCaptured: false }));
+          for (const t of state.territories) {
+            if (!t.isCapital || !t.capitalOf) continue;
+            if (t.controller !== t.capitalOf && t.controller !== 'neutral') {
+              // Capital is already enemy-held — mark owner as captured and transfer IPC
+              const ownerIPC = nations.find(n => n.id === t.capitalOf)?.ipc ?? 0;
+              nations = nations.map(n => {
+                if (n.id === t.capitalOf)   return { ...n, ipc: 0, capitalCaptured: true };
+                if (n.id === t.controller)  return { ...n, ipc: n.ipc + ownerIPC };
+                return n;
+              });
+            }
+          }
+          state = { ...state, nations };
+        }
+        if (fromVersion < 7) {
+          // Add pendingCapitalSeizures field; reverse the immediate IPC transfer from v6
+          // so the amount is shown and applied at Collect Income instead
+          type N7 = typeof state.nations[number] & { pendingCapitalSeizures?: Array<{ capturedFrom: NationId; amount: number }> };
+          let nations: N7[] = state.nations.map(n => ({ ...n, pendingCapitalSeizures: [] as Array<{ capturedFrom: NationId; amount: number }> }));
+          for (const t of state.territories) {
+            if (!t.isCapital || !t.capitalOf) continue;
+            if (t.controller !== t.capitalOf && t.controller !== 'neutral') {
+              // Use startingIPC as proxy for the seized amount (was taken by v6 migration)
+              const seizedAmount = nations.find(n => n.id === t.capitalOf)?.startingIPC ?? 0;
+              nations = nations.map(n => {
+                if (n.id === t.controller) return {
+                  ...n,
+                  ipc: Math.max(0, n.ipc - seizedAmount),
+                  pendingCapitalSeizures: [...(n.pendingCapitalSeizures ?? []), { capturedFrom: t.capitalOf as NationId, amount: seizedAmount }],
+                };
+                return n;
+              });
+            }
+          }
+          state = { ...state, nations: nations as typeof state.nations };
+        }
+        return state;
+      },
+    }
   )
 );
 

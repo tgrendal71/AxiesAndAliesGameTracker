@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGameStore } from '../store/gameStore';
+import { useGameStore, TURN_ORDER } from '../store/gameStore';
 import { AXIS_NATIONS, ALLIED_NATIONS } from '../data/nations';
 import type { Territory, NationId, NeutralType } from '../store/types';
 
@@ -21,10 +21,11 @@ const BUILDING_ICONS: Record<string, string> = {
 type Filter = 'all' | 'axis' | 'allied' | 'neutral' | 'capital' | 'victory' | 'nation';
 
 export default function TerritoriesPage() {
-  const { territories, nations, updateTerritory } = useGameStore();
+  const { territories, nations, updateTerritory, activeNationIndex } = useGameStore();
+  const activeNationId = TURN_ORDER[activeNationIndex] ?? '';
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<Filter>('all');
-  const [nationFilter, setNationFilter] = useState<NationId | ''>('');
+  const [filter, setFilter] = useState<Filter>('nation');
+  const [nationFilter, setNationFilter] = useState<NationId | ''>(activeNationId as NationId);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const filtered = territories
@@ -118,6 +119,7 @@ export default function TerritoriesPage() {
             <tr className="bg-[#0f1509] border-b border-[#2a3818]">
               <th className="text-left px-3 py-2 text-mil-muted uppercase tracking-wider font-display">Territorium</th>
               <th className="text-left px-3 py-2 text-mil-muted uppercase tracking-wider font-display">Kontrolles av</th>
+              <th className="text-left px-3 py-2 text-mil-muted uppercase tracking-wider font-display">Oppr. eier</th>
               <th className="text-center px-3 py-2 text-mil-muted uppercase tracking-wider font-display">IPC</th>
               <th className="text-left px-3 py-2 text-mil-muted uppercase tracking-wider font-display">Bygninger</th>
               <th className="text-center px-3 py-2 text-mil-muted uppercase tracking-wider font-display">Flagg</th>
@@ -126,6 +128,8 @@ export default function TerritoriesPage() {
           <tbody>
             {filtered.map((t, i) => {
               const ctrl = nations.find(n => n.id === t.controller);
+              const orig = t.originalOwner !== 'neutral' ? nations.find(n => n.id === t.originalOwner) : null;
+              const isCaptured = orig && t.controller !== t.originalOwner;
               return (
                 <tr
                   key={t.id}
@@ -148,6 +152,18 @@ export default function TerritoriesPage() {
                       <span className="tag bg-[#1a2210] text-mil-muted">
                         {t.neutralType ? NEUTRAL_TYPE_LABELS[t.neutralType] : 'Nøytral'}
                       </span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    {isCaptured ? (
+                      <span
+                        className="tag"
+                        style={{ backgroundColor: orig!.colorDim, color: orig!.textColor }}
+                      >
+                        {orig!.emoji} {orig!.shortName}
+                      </span>
+                    ) : (
+                      <span className="text-mil-muted text-[10px]">—</span>
                     )}
                   </td>
                   <td className="px-3 py-2 text-center">
@@ -204,8 +220,9 @@ export default function TerritoriesPage() {
 }
 
 function TerritoryEditor({ territory, onClose }: { territory: Territory; onClose: () => void }) {
-  const { nations, updateTerritory } = useGameStore();
-  const [controller, setController] = useState(territory.controller);
+  const { nations, updateTerritory, activeNationIndex } = useGameStore();
+  const activeNationId = TURN_ORDER[activeNationIndex] ?? territory.controller;
+  const [controller, setController] = useState<NationId | 'neutral'>(activeNationId as NationId);
 
   const save = () => {
     updateTerritory(territory.id, { controller: controller as NationId });
